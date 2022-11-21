@@ -1,3 +1,65 @@
+## [0.4.10](https://github.com/yamadharma/ceurart/compare/v0.4.9...v0.4.10) (2022-11-13)
+
+
+### Bug Fixes
+
+* **ceurart:** replace http by https for ceur-ws.org ([ce0f1b6](https://github.com/yamadharma/ceurart/commit/ce0f1b6b80fca88c28711ee756d5b1e4faf3fe52))
+
+
+### Features
+
+* **ceurart:** add new ceur-ws logo ([cedb505](https://github.com/yamadharma/ceurart/commit/cedb505949e61958db29967f7bb353fec52f54f3))
+
+
+
+## [0.4.9](https://github.com/yamadharma/ceurart/compare/v0.4.8...v0.4.9) (2022-07-12)
+
+
+### Bug Fixes
+
+* **ceurart:** fix class revision ([fc43c58](https://github.com/yamadharma/ceurart/commit/fc43c58f7512ea08680f98edc8135f0ac17be038))
+
+
+
+## [0.4.8](https://github.com/yamadharma/ceurart/compare/v0.4.7...v0.4.8) (2022-07-03)
+
+
+### Features
+
+* **ceurart:** switch to PDF/A-1a (instead of PDF/A-3u) ([3f7a9ec](https://github.com/yamadharma/ceurart/commit/3f7a9ece326b46b7c1585082b2d6ce47df739552))
+
+
+
+## [0.4.7](https://github.com/yamadharma/ceurart/compare/v0.4.6...v0.4.7) (2022-03-16)
+
+
+### Features
+
+* **ceurart:** add footmisc options to flush margins left ([cb25973](https://github.com/yamadharma/ceurart/commit/cb2597324bef7829091e282e777b04a1bef2d7f8))
+* **ceurart:** add symbols to fnmark ([21b105b](https://github.com/yamadharma/ceurart/commit/21b105b5d227035cd6ebf03717a73b12f8cb66f7))
+* **ceurart:** add to template various marks in the front matter ([#8](https://github.com/yamadharma/ceurart/issues/8)) ([f826d55](https://github.com/yamadharma/ceurart/commit/f826d5509fd2581864263bd9fdce49b3e6cc8ccf))
+
+
+
+## [0.4.6](https://github.com/yamadharma/ceurart/compare/v0.4.5...v0.4.6) (2022-02-27)
+
+
+### Bug Fixes
+
+* **ceurart:** add support symbols with accent in title ([faabbd9](https://github.com/yamadharma/ceurart/commit/faabbd9e5be971fdcff4062c0e0f2fd840f7a7c8))
+* **ceurart:** change hardcoded keywors name to command ([99c6f60](https://github.com/yamadharma/ceurart/commit/99c6f60a2fd601fe199c9805c698fc9d432eac54))
+* **ceurart:** fix using accents in author name ([#3](https://github.com/yamadharma/ceurart/issues/3)) ([53c17c7](https://github.com/yamadharma/ceurart/commit/53c17c7bb4ba9f0fd45dfceff93a0830b5f17b67))
+* **ceurart:** add support underscore in email address ([#4](https://github.com/yamadharma/ceurart/issues/4)) ([c20b8df](https://github.com/yamadharma/ceurart/commit/c20b8df3ea42e56905efe8deff956a1512c6174e))
+* **sample:** change year in sample files ([ca8cbbd](https://github.com/yamadharma/ceurart/commit/ca8cbbd4210a4c5adc28e9e22232adbdf6173bb0))
+* **sample:** change year in sample+minted ([93743e0](https://github.com/yamadharma/ceurart/commit/93743e0f3d7e1055431d7a03232006f7693ee184))
+
+
+### Features
+
+* **ceurart:** add keywords to pdf/a properties ([#9](https://github.com/yamadharma/ceurart/issues/9)) ([2283b5d](https://github.com/yamadharma/ceurart/commit/2283b5dffccd3472eb25894e125b19516bba927e))
+
+
+
 ## [0.4.5](https://github.com/yamadharma/ceurart/compare/v0.4.4...v0.4.5) (2021-07-30)
 
 

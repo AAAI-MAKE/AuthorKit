@@ -1,5 +1,5 @@
 %% ceurart.cls
-%% Copyright 2019--2020 CEUR Workshop Proceedings (CEUR-WS.org)
+%% Copyright 2019--2022 CEUR Workshop Proceedings (CEUR-WS.org)
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -16,8 +16,8 @@
 % 
 
 \def\RCSfile{ceurart}%
-\def\RCSversion{0.4.5}%
-\def\RCSdate{2021/07/30}%
+\def\RCSversion{0.4.10}%
+\def\RCSdate{2022/11/12}%
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesClass{\RCSfile}[\RCSdate, \RCSversion: Typesetting articles for CEUR Workshop Proceedings (CEUR-WS.org)]
 
@@ -87,7 +87,7 @@
 \RequirePackage{etoolbox,balance}
 \RequirePackage{booktabs,makecell,multirow,array,colortbl,dcolumn,stfloats}
 \RequirePackage{xspace,xstring}
-\RequirePackage{footmisc}
+\RequirePackage[hang,flushmargin]{footmisc}
 \RequirePackage[svgnames,dvipsnames]{xcolor}
 \RequirePackage{iftex}
 \RequirePackage{microtype}
@@ -160,7 +160,7 @@
 
   % }}}
   
-  \RequirePackage[useBOM,pdf17,a-3u]{pdfx}
+  \RequirePackage[useBOM,pdf17,a-1a]{pdfx}
   \bool_gset_true:N \g_ceur_pdfx_bool
 }{%
   \RequirePackage[unicode]{hyperref}
@@ -188,6 +188,9 @@
 \let\comma\@empty
 \let\tnotesep\@empty
 \let\@title\@empty
+
+\let\pdfxauthors\@empty
+\let\pdfxkeywords\@empty
 
 %
 % Load Common items
@@ -266,6 +269,12 @@
   \gdef\ceurConference@name{#1}%
 }
 
+\NewDocumentCommand \noindentfoot {} {
+  \raggedright
+  \hspace*{-\parindent}
+  \hspace*{-\footnotemargin}
+}
+
 %
 % Specific to Single Column
 %
@@ -304,7 +313,7 @@
     \printFirstPageNotes
   }
   \normalcolor \normalfont
-  \setcounter{footnote}{\int_use:N \g_ceur_fnote_int}
+  \setcounter{footnote}{\int_use:N \g_ceur_fnote_int}  
   \renewcommand\thefootnote{\arabic{footnote}}
   \gdef\@pdfauthor{\infoauthors}
   % \gdef\@pdfsubject{Complex ~CEUR ~Content}
@@ -356,8 +365,9 @@
   
   \bool_if:NTF \g_ceur_pdfx_bool
   {
-    \xmpdatawrite{Title}{\casprelimstitle}
+    \xmpdatawrite{Title}{\detokenize\expandafter{\casprelimstitle}}
     \xmpdatawrite{Author}{\pdfxauthors}
+    \xmpdatawrite{Keywords}{\pdfxkeywords}
     \xmpdatawrite{Subject}{CEUR~Workshop~Proceedings~(CEUR-WS.org)}
 
     \ifx\@copyrightclause\@empty\else
@@ -380,7 +390,7 @@
       % pdfauthor={\csuse{__authors:}},
       % pdftitle={\@title},
       pdfsubject={CEUR~Workshop~Proceedings~(CEUR-WS.org)},
-      % pdfkeywords={\@keywords},
+      pdfkeywords={\pdfxkeywords},
       linkcolor={hscolor},
       urlcolor={hscolor},
       citecolor={hscolor},
@@ -724,7 +734,7 @@
   \seq_gput_right:Nn \g_ceur_ead_seq
   {
     % { \ttfamily \tl_to_str:n { #1 } }
-    { \href {mailto: #1 } { #1 } }
+    { \href {mailto: #1 } { \protect\nolinkurl{#1} } }
     \parsename { #2 }
     \space(\eadauthor)%
   }
@@ -866,7 +876,7 @@
    {
      \tl_if_head_eq_catcode:nNTF { #1 } a
        {
-         \msg_term:n { [TNOTE:~alpha] }%
+         % \msg_term:n { [TNOTE:~alpha] }%
          \seq_gput_right:Nn \g_ceur_tnote_seq
            { \int_incr:N \g_ceur_tnote_int
              \str_set:Nx \@currentlabel { \int_use:N \g_ceur_tnote_int }
@@ -883,7 +893,7 @@
             }
           }
         {
-          \msg_term:n { [TNOTE:~Number] }
+          % \msg_term:n { [TNOTE:~Number] }
           \seq_gput_right:Nn \g_ceur_tnote_seq
           {
             \int_set:Nn \l_tmpa_int { #1 }
@@ -911,10 +921,10 @@
   {
     \tex_def:D \thefootnote { }
     \footnotetext{%
-      \raggedright
-      \hspace*{-\parindent}
-      % \hspace*{-\labelsep}
-      \hspace*{-\footnotemargin}
+      % \raggedright
+      % \hspace*{-\parindent}
+      % % \hspace*{-\labelsep}
+      % \hspace*{-\footnotemargin}
       #1}
   }
   \group_end:
@@ -925,25 +935,39 @@
 \seq_new:N \g_ceur_fnote_seq
 \int_new:N \g_ceur_fnote_int
 
-\NewDocumentCommand \fntext { O{} m }
-{
-  \tl_if_head_eq_catcode:nNTF { #1 } a
-  {
-    \msg_term:n { [FN:~alpha] }%
-    \seq_gput_right:Nn \g_ceur_fnote_seq
-    { \int_incr:N \g_ceur_fnote_int
+\NewDocumentCommand \fntext { O{} m } {
+  \tl_if_head_eq_catcode:nNTF { #1 } a {
+    % \msg_term:n { [FN:~alpha] }%
+    \seq_gput_right:Nn \g_ceur_fnote_seq {
+      \int_incr:N \g_ceur_fnote_int
       \str_set:Nx \@currentlabel { \int_use:N \g_ceur_fnote_int }
       \ceurLabel { #1 }
-      \tex_def:D \thefootnote { \int_use:N \g_ceur_fnote_int }
+      % \tex_def:D \thefootnote { \int_use:N \g_ceur_fnote_int }
+      \tex_def:D \thefootnote {
+        \int_case:nn { \g_ceur_tnote_int } {
+          { 1 } { $^{\dagger}$ }
+          { 2 } { $^{\ddagger}$ }
+          { 3 } { $^{\S}$ }
+          { 4 } { $^{\P}$ }
+          { 5 } { $^{\|}$ }
+        }
+      }
       \footnotetext { #2 }
     }
-  }
-  {
-    \msg_term:n { [FN:~Number] }
-    \seq_gput_right:Nn \g_ceur_fnote_seq
-    {
+  } {
+    % \msg_term:n { [FN:~Number] }
+    \seq_gput_right:Nn \g_ceur_fnote_seq {
       \int_set:Nn \l_tmpa_int { #1 }
-      \tex_def:D \thefootnote { \int_use:N \l_tmpa_int }
+      % \tex_def:D \thefootnote { \int_use:N \l_tmpa_int }
+      \tex_def:D \thefootnote {
+        \int_case:nn { \l_tmpa_int } {
+          { 1 } { $^{\dagger}$ }
+          { 2 } { $^{\ddagger}$ }
+          { 3 } { $^{\S}$ }
+          { 4 } { $^{\P}$ }
+          { 5 } { $^{\|}$ }
+        }
+      }
       \footnotetext { #2 }
     }
   }
@@ -954,34 +978,28 @@
 \seq_new:N \g_ceur_cor_seq
 \int_new:N \g_ceur_cor_int
 
-\NewDocumentCommand \cortext { O{} m }
-{
-  \tl_if_head_eq_catcode:nNTF { #1 } a
-  {
-    \msg_term:n { [COR:~alpha] }%
-    \seq_gput_right:Nn \g_ceur_cor_seq
-    { \int_incr:N \g_ceur_cor_int
+\NewDocumentCommand \cortext { O{} m } {
+  \tl_if_head_eq_catcode:nNTF { #1 } a  {
+    % \msg_term:n { [COR:~alpha] }%
+    \seq_gput_right:Nn \g_ceur_cor_seq {
+      \int_incr:N \g_ceur_cor_int
       \str_set:Nx \@currentlabel { \int_use:N \g_ceur_cor_int }
       \ceurLabel { #1 }
-      \tex_def:D \thefootnote
-      { \int_case:nn { \g_ceur_cor_int }
-        {
+      \tex_def:D \thefootnote {
+        \int_case:nn { \g_ceur_cor_int } {
           { 1 } { $\ast$ }
           { 2 } { $\ast\!\ast$ }
           { 3 } { $\ast\!\ast\!\ast$ }
         }
       }
-      \footnotetext { #2 }
+      \footnotetext { \noindentfoot #2 }
     }
-  }
-  {
-    \msg_term:n { [COR:~Number] }
-    \seq_gput_right:Nn \g_ceur_cor_seq
-    {
+  } {
+    % \msg_term:n { [COR:~Number] }
+    \seq_gput_right:Nn \g_ceur_cor_seq {
       \int_set:Nn \l_tmpa_int { #1 }
-      \tex_def:D \thefootnote
-      { \int_case:nn { \l_tmpa_int }
-        {
+      \tex_def:D \thefootnote {
+        \int_case:nn { \l_tmpa_int } {
           { 1 } { $\ast$ }
           { 2 } { $\ast\!\ast$ }
           { 3 } { $\ast\!\ast\!\ast$ }
@@ -994,26 +1012,31 @@
 
 \newcommand \printcornotes { \seq_use:Nn \g_ceur_cor_seq { \par } }
 
-\NewDocumentCommand \process@marks { }
-   {
-     \cs_if_free:cTF { mark@corau\theauthor }
-       { \ignorespaces }
-       { \str_set:Nx \l_tmpa_str { \use:c{ mark@corau\theauthor } }
-         \int_case:nn { \l_tmpa_str }
-           {
-             { 1 } { \sep$\ast$ }
-             { 2 } { \sep$\ast\ast$ }
-             { 3 } { \sep$\ast\!\ast\!\ast$ }
-           }
-           \tex_def:D \sep{\unskip,}
-         }
-      \cs_if_free:cTF { mark@fnau\theauthor }
-        { \ignorespaces }
-        { \sep\use:c { mark@fnau\theauthor }
-          \tex_def:D \sep{\unskip,}
-        }
-      }
-
+\NewDocumentCommand \process@marks { } {
+  \cs_if_free:cTF { mark@corau\theauthor }
+  { \ignorespaces }
+  { \str_set:Nx \l_tmpa_str { \use:c{ mark@corau\theauthor } }
+    \int_case:nn { \l_tmpa_str } {
+      { 1 } { \sep$\ast$ }
+      { 2 } { \sep$\ast\ast$ }
+      { 3 } { \sep$\ast\!\ast\!\ast$ }
+    }
+    \tex_def:D \sep{\unskip,}
+  }
+  %% 
+  \cs_if_free:cTF { mark@fnau\theauthor }
+  { \ignorespaces }
+  { \str_set:Nx \l_tmpa_str { \use:c{ mark@fnau\theauthor } }
+    \int_case:nn { \l_tmpa_str } {
+      { 1 } { \sep${\dagger}$ }
+      { 2 } { \sep${\ddagger}$ }
+      { 3 } { \sep${\S}$ }
+      { 4 } { \sep${\P}$ }
+      { 5 } { \sep${\|}$ }
+    }
+    \tex_def:D \sep{\unskip,}
+  }
+}
 
 %%
 %% Author macros
@@ -1392,8 +1415,8 @@
   % Authors list for PDF/A
   \csgdef { __pdfxauthor } { #2 }
   \int_compare:nNnTF { \theau@ } = { 1 }
-  { \xappto \pdfxauthors { \__pdfxauthor } }
-  { \xappto \pdfxauthors { \iow_char:N \\ sep ~ \__pdfxauthor } }
+  { \xappto \pdfxauthors { \detokenize\expandafter{\__pdfxauthor} } }
+  { \xappto \pdfxauthors { \iow_char:N \\ sep ~ \detokenize\expandafter{\__pdfxauthor} } }
 }
 
 \NewDocumentCommand \ceurauthors { } {
@@ -1802,22 +1825,23 @@
      \par\noindent \textit { PACS:\c_space_token } #1
    }
 
-\NewDocumentEnvironment { keywords } { O{ Keywords } } {
+\NewDocumentEnvironment { keywords } { +b } {
+  %% Keywords list for PDF/A
+  \csgdef { pdfxkeywords } { \detokenize\expandafter{ #1 } }
+  %% replace \sep by commas 
   \tex_global:D \tex_setbox:D \g_ceur_key_box = \vtop \bgroup
   \hsize=.9 \textwidth
   \vspace*{0pt}
   \cs_new:Nn \sep: {\unskip,~}
   \cs_set_eq:NN \sep \sep:
+  %% Environment block
   \parindent \z@
-
-  % A\,R\,T\,I\,C\,L\,E\ \ I\,N\,F\,O \par \skip_vertical:n { -3pt }
-  % \rule{.25 \textwidth}{.2pt}\par
-  \noindent \textbf {\sffamily #1 }  \par
+  \noindent \textbf {\sffamily \keywordtitle }  \par
   \footnotesize
-}{
+  #1
   \skip_vertical:n { \baselineskip }
   \egroup
-}
+} { }
 
 %% Acknowledgments
 
@@ -1853,7 +1877,7 @@
     \href{https://creativecommons.org/licenses/by/4.0}%
     {\lower\baselineskip\hbox{\unhcopy\@tempboxa}}\enskip
   \end{minipage}
-  \enskip
+  \nobreak\enskip
   \begin{minipage}[c]{\linewidth - \ccLogoWidth - 2\footnotemargin}
     \tiny
     \textcopyright\ \@copyrightyear\ %
@@ -1874,20 +1898,19 @@
   \@rightskip\@flushglue \rightskip\@rightskip
   % \hangindent\dimexpr\wd\@tempboxa+0.5em\relax
   \begin{minipage}[c]{\ccLogoWidth}
-    \href{http://ceur-ws.org}%
+    \href{https://ceur-ws.org}%
     % {\lower\baselineskip\hbox{\unhcopy\@tempboxa}}\enskip
     {\hbox{\unhcopy\@tempboxa}}
   \end{minipage}
-  \enskip
+  \nobreak\enskip
   \begin{minipage}[c]{\linewidth - \ccLogoWidth - 2\footnotemargin}
-    {CEUR~Workshop~Proceedings~(\href{http://ceur-ws.org}{CEUR-WS.org})}%
+    {CEUR~Workshop~Proceedings~(\href{https://ceur-ws.org}{CEUR-WS.org})}%
   \end{minipage}
 }
 
 \seq_new:N \g_ceur_logonote_seq
 
-\NewDocumentCommand \logonote { m }
-{
+\NewDocumentCommand \logonote { m } {
   \group_begin:
   \seq_gput_right:Nn \g_ceur_logonote_seq
   {
@@ -1919,11 +1942,12 @@
   \int_compare:nTF { \g_ceur_jtype_int > 5 } {
     \ceuraddress
   } { }
-  \printtnotes
   \printnonumnotes
+  \printtnotes
   \bool_if:NTF \g_ceur_blind_bool {
   } {
     \printcornotes
+    \printfnotes
     \printmaltese
     \printaddrinfoot
     \printemails
@@ -1933,7 +1957,6 @@
     \printtwitter
     \printgplus
     \printlinkedin
-    \printfnotes
   }
   \printlogonotes
   \bool_if:NTF \g_ceur_longmktitle_bool {
